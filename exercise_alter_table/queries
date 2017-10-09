@@ -1,0 +1,49 @@
+## Exercise: alter table
+
+mysql> CREATE DATABASE testing_database;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> USE testing_database
+Database changed
+
+mysql> CREATE TABLE testing_table (
+    -> name char(40),
+    -> contact_name char(40),
+    -> roll_no char(20)
+    -> );
+Query OK, 0 rows affected (0.40 sec)
+
+mysql> ALTER TABLE testing_table
+    -> DROP COLUMN name;
+Query OK, 0 rows affected (0.67 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> ALTER TABLE testing_table 
+    ->CHANGE contact_name username char(40);
+Query OK, 0 rows affected (0.09 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> ALTER TABLE testing_table 
+    -> ADD first_name char(30), 
+    -> ADD last_name char(30);
+Query OK, 0 rows affected (0.60 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> ALTER TABLE testing_table
+    -> MODIFY COLUMN roll_no int;
+Query OK, 0 rows affected (0.85 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> DESCRIBE testing_table;
++------------+----------+------+-----+---------+-------+
+| Field      | Type     | Null | Key | Default | Extra |
++------------+----------+------+-----+---------+-------+
+| username   | char(40) | YES  |     | NULL    |       |
+| first_name | char(30) | YES  |     | NULL    |       |
+| last_name  | char(30) | YES  |     | NULL    |       |
+| roll_no    | int(11)  | YES  |     | NULL    |       |
++------------+----------+------+-----+---------+-------+
+4 rows in set (0.00 sec)
+
+
+
