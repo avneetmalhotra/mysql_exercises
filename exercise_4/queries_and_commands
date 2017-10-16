@@ -1,0 +1,48 @@
+mysql> CREATE DATABASE exercise4;
+Query OK, 1 row affected (0.00 sec)
+
+vin@vin-HP-ProBook-4530s:~/Documents$ mysqldump -u root -p exercise4 > exercise4_db_backup.sql
+Enter password: 
+
+mysql> CREATE DATABASE restored;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> USE restored;
+Database changed
+mysql> source exercise4_db_backup.sql;
+Query OK, 0 rows affected (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
+Query OK, 0 rows affected (0.00 sec)
+
