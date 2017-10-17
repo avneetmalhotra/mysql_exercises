@@ -1,0 +1,74 @@
+mysql> CREATE DATABASE bank;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> USE bank;
+Database changed
+mysql> CREATE TABLE users(
+    -> id INT PRIMARY KEY,
+    -> name CHAR(40),
+    -> email CHAR(60),
+    -> account_no INT
+    -> );
+Query OK, 0 rows affected (0.58 sec)
+
+mysql> CREATE TABLE accounts(
+    -> id INT PRIMARY KEY,
+    -> account_no INT,
+    -> balance INT
+    -> );
+Query OK, 0 rows affected (0.51 sec)
+
+mysql> INSERT INTO users VALUES
+    -> (101, 'userA', 'usera@email.com', 20001),
+    -> (102, 'userB', 'userb@email.com', 30001);
+Query OK, 2 rows affected (0.05 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO accounts VALUES
+    -> (1, 20001, 5000),
+    -> (2, 30001, 3000);
+Query OK, 2 rows affected (0.06 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> START TRANSACTION;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> UPDATE accounts, users
+    -> SET balance = balance + 1000
+    -> WHERE users.name = 'userA' AND users.account_no = accounts.account_no
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> COMMIT;
+Query OK, 0 rows affected (0.40 sec)
+
+mysql> START TRANSACTION;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> UPDATE accounts, users
+    -> SET balance = balance - 500
+    -> WHERE users.name = 'userA' AND users.account_no = accounts.account_no;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> COMMIT;
+Query OK, 0 rows affected (0.40 sec)
+
+mysql> START TRANSACTION;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> UPDATE accounts, users
+    -> SET balance = balance - 200
+    -> WHERE users.name = 'userA' AND users.account_no = accounts.account_no;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE accounts, users
+    -> SET balance = balance + 200
+    -> WHERE users.name = 'userB' AND users.account_no = accounts.account_no;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> COMMIT;
+Query OK, 0 rows affected (0.06 sec)
+
