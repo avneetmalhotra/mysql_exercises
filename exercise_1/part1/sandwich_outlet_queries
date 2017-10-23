@@ -76,34 +76,34 @@ mysql> INSERT INTO sandwiches VALUES
 Query OK, 10 rows affected (0.84 sec)
 Records: 10  Duplicates: 0  Warnings: 0
 
-mysql> SELECT * FROM locations
-    -> WHERE lname IN (
-    -> SELECT location FROM sandwiches
+mysql> #(i)places where Jones can eat(using a nested subquery). 
+mysql> SELECT location FROM sandwiches
     -> WHERE filling IN (SELECT
     -> filling FROM tastes 
-    -> WHERE name='Jones')
+    -> WHERE name='Jones'
     -> );
-+-----------+-------+------------+
-| lname     | phone | address    |
-+-----------+-------+------------+
-| Buttery   |   255 | College St |
-| O'Neill's |   255 | Pearse St  |
-+-----------+-------+------------+
+-----------+
+| location  |
++-----------+
+| Buttery   |
+| O'Neill's |
++-----------+
+2 rows in set (0.38 sec)
+
+mysql> #(ii)places where Jones can eat(without using a nested subquery) 
+mysql> SELECT locations 
+    -> FROM (tastes
+    -> INNER JOIN sandwiches ON tastes.filling = sandwiches.filling)
+    -> WHERE name = 'Jones'
++-----------+
+| location  |
++-----------+
+| Buttery   |
+| O'Neill's |
++-----------+
 2 rows in set (0.00 sec)
 
-mysql> SELECT sandwiches.location, locations.phone, locations.address 
-    -> FROM ((tastes
-    -> INNER JOIN sandwiches ON tastes.filling = sandwiches.filling 
-    -> AND tastes.name = 'Jones')
-    -> INNER JOIN locations ON locations.lname = sandwiches.location);
-+-----------+-------+------------+
-| location  | phone | address    |
-+-----------+-------+------------+
-| Buttery   |   255 | College St |
-| O'Neill's |   255 | Pearse St  |
-+-----------+-------+------------+
-2 rows in set (0.00 sec)
-
+mysql> #(iii)for each location the number of people who can eat there.
 mysql> SELECT sandwiches.location, COUNT(DISTINCT(tastes.name)) AS no_of_people FROM tastes  INNER JOIN sandwiches ON sandwiches.filling = tastes.filling GROUP BY sandwiches.location;
 +-----------+--------------+
 | location  | no_of_people |

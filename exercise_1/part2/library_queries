@@ -54,6 +54,7 @@ mysql> INSERT INTO holdings VALUES
 Query OK, 10 rows affected (0.09 sec)
 Records: 10  Duplicates: 0  Warnings: 0
 
+mysql> #(i)the names of all library books published by Macmillan.
 mysql> SELECT title FROM titles 
     -> WHERE publisher = 'Macmillan';
 +----------+
@@ -64,6 +65,7 @@ mysql> SELECT title FROM titles
 +----------+
 2 rows in set (0.00 sec)
 
+mysql> #(ii)branches that hold any books by Ann Brown(using a nested subquery)
 mysql> SELECT * FROM branches
     -> WHERE bcode IN (SELECT
     -> branch FROM holdings
@@ -80,22 +82,24 @@ mysql> SELECT * FROM branches
 +-------+---------------+---------------+
 3 rows in set (0.00 sec)
 
-mysql> SELECT DISTINCT(branch), address
-    -> FROM ((titles 
-    -> INNER JOIN holdings ON titles.title = holdings.title 
-    -> AND titles.author = 'Ann Brown')
-    -> INNER JOIN branches ON branches.bcode = holdings.branch);
-+--------+---------------+
-| branch | address       |
-+--------+---------------+
-| B1     | 2 Anglesea Rd |
-| B2     | 34 Pearse St  |
-| B3     | Grange X      |
-+--------+---------------+
+mysql> #(iii)branches that hold any books by Ann Brown(without using a nested subquery)
+mysql> SELECT DISTINCT(branch) 
+    -> FROM ((branches
+    -> INNER JOIN holdings ON branches.bcode = holdings.branch)
+    -> INNER JOIN titles USING(title))
+    -> WHERE author = 'Ann Brown';
++--------+
+| branch |
++--------+
+| B1     |
+| B2     |
+| B3     |
++--------+
 3 rows in set (0.00 sec)
 
+mysql> #(iv)the total number of books held at each branch
 mysql> SELECT branch, sum(no_of_copies) AS total_no_pf_books
-    ->FROM holdings
+    -> FROM holdings
     -> GROUP BY branch;
 +--------+-------------------+
 | branch | total_no_pf_books |
