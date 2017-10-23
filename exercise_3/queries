@@ -1,0 +1,241 @@
+/*
+Design a table structure for following conditions:
+
+A user can write many articles. Each written article will fall under one category. Remember that many articles can be written under same category.
+
+The users can be of two types viz. admin or normal. A user can post multiple comments on an article.
+
+Now write queries for:
+
+1. manage(create, update, delete) categories, articles, comments, and users
+2. select all articles whose author's name is user3 (Do this exercise using variable also).
+3. For all the articles being selected above, select all the articles and also the comments associated with those articles in a single query (Do this using subquery also)
+4. Write a query to select all articles which do not have any comments (Do using subquery also)
+5. Write a query to select article which has maximum comments
+6. Write a query to select article which does not have more than one comment by the same user ( do this using left join and group by )
+*/
+
+mysql> CREATE DATABASE article;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> USE article;
+Database changed
+mysql> CREATE TABLE users (
+    -> id INT PRIMARY KEY UNIQUE AUTO_INCREMENT,
+    -> user_name char(30),
+    -> type enum('admin', 'normal') DEFAULT 'normal'
+    -> );
+Query OK, 0 rows affected (1.58 sec)
+
+mysql> CREATE TABLE categories (
+    -> id INT PRIMARY KEY UNIQUE AUTO_INCREMENT,
+    -> category CHAR(20)
+    -> );
+Query OK, 0 rows affected (0.70 sec)
+
+mysql> ALTER TABLE categories
+    -> AUTO_INCREMENT = 101;
+Query OK, 0 rows affected (0.38 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> CREATE TABLE articles (
+    -> id INT PRIMARY KEY UNIQUE AUTO_INCREMENT,
+    -> author_id INT REFERENCES users(user_id),
+    -> category_id INT REFERENCES categories(category_id)
+    -> );
+Query OK, 0 rows affected (0.99 sec)
+
+mysql> ALTER TABLE articles
+    -> AUTO_INCREMENT = 201;
+Query OK, 0 rows affected (0.08 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> CREATE TABLE comments (
+    -> id INT PRIMARY KEY UNIQUE AUTO_INCREMENT,
+    -> commentor_id INT REFERENCES users(user_id)
+    -> article_id INT REFERENCES articles(article_id)
+    -> );
+Query OK, 0 rows affected (0.87 sec)
+
+mysql> ALTER TABLE comments
+    -> AUTO_INCREMENT = 301;
+Query OK, 0 rows affected (0.09 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO users(user_name, type) VALUES
+    -> ('user1', 'admin'),
+    -> ('user2', 'normal'),
+    -> ('user3', 'normal'),
+    -> ('user4', 'normal'),
+    -> ('user5', 'admin'),
+    -> ('user6', 'normal'),
+    -> ('user7', 'normal'),
+    -> ('user8', 'superadmin');
+Query OK, 6 rows affected (0.09 sec)
+Records: 6  Duplicates: 0  Warnings: 0
+
+mysql> DELETE FROM users 
+    -> WHERE id = 7 OR id = 8;
+Query OK, 2 rows affected (0.05 sec)
+
+mysql> INSERT INTO categories(category) 
+    -> Values
+    -> ('horror'),
+    -> ('adventure'),
+    -> ('technology'),
+    -> ('sport');
+Query OK, 4 rows affected (0.42 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO articles (author_id, category_id)
+    -> VALUES
+    -> (1, 101);
+Query OK, 1 row affected (0.39 sec)
+
+mysql> INSERT INTO articles (author_id, category_id)
+    -> VALUES
+    -> (2, 102),
+    -> (3, 103),
+    -> (4, 104),
+    -> (5, 101),
+    -> (6, 102),
+    -> (7, 103),
+    -> (2, 104);
+Query OK, 7 rows affected (0.41 sec)
+Records: 7  Duplicates: 0  Warnings: 0
+
+mysql> UPDATE articles
+    -> SET user_id = 1
+    -> WHERE id = 207;
+Query OK, 1 row affected (0.07 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> INSERT INTO articles (author_id, category_id)
+    -> VALUES
+    -> (6, 101),
+    -> (3, 102);
+Query OK, 2 rows affected (0.39 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO comments (article_id, commentor_id)
+    -> VALUES
+    -> (202, 2),
+    -> (203, 4),
+    -> (204, 6),
+    -> (205, 3),
+    -> (209, 1),
+    -> (210, 2),
+    -> (209, 6),
+    -> (210, 3),
+    -> (204, 6),
+Query OK, 10 rows affected (0.39 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> #2.select all articles whose author's name is user3 (Do this exercise using variable also)
+mysql> SELECT articles.id AS article_id FROM
+    -> users INNER JOIN articles ON
+    -> users.id = articles.author_id AND user_name = 'user3';
++------------+
+| article_id |
++------------+
+|        203 |
+|        210 |
++------------+
+2 rows in set (0.00 sec)
+
+mysql> #3.For all the articles being selected above, select all the articles and also the comments associated with those articles in a single query (using joins)
+
+mysql> SELECT comments.id AS comment_id, articles.id as article_id FROM ((users
+    -> INNER JOIN articles ON users.id = articles.author_id)
+    -> INNER JOIN comments ON articles.id = comments.article_id 
+    -> AND users.user_name = 'user3');
++------------+------------+
+| comment_id | article_id |
++------------+------------+
+|        302 |        203 |
+|        306 |        210 |
+|        308 |        210 |
+|        310 |        203 |
++------------+------------+
+4 rows in set (0.01 sec)
+
+mysql> #3.For all the articles being selected above, select all the articles and also the comments associated with those articles in a single query (using subquery)
+mysql> SELECT articles.id AS article_id, comments.id AS comment_id
+    -> FROM articles, comments 
+    -> WHERE (articles.id, comments.id) IN(SELECT 
+    -> article_id, id FROM comments WHERE article_id IN(SELECT 
+    -> id FROM articles WHERE author_id IN(SELECT 
+    -> users.id FROM users WHERE user_name = 'user3')
+    -> )
+    -> );
++-----+-----+
+| id  | id  |
++-----+-----+
+| 203 | 302 |
+| 210 | 306 |
+| 210 | 308 |
+| 203 | 310 |
++-----+-----+
+4 rows in set (0.00 sec)
+
+
+mysql> #4.Write a query to select all articles which do not have any comments (using subquery)
+mysql> SELECT id AS article_id FROM articles
+    -> WHERE articles.id NOT IN (SELECT
+    -> article_id FROM comments);
++------------+
+| article_id |
++------------+
+|        201 |
+|        206 |
+|        207 |
+|        208 |
++------------+
+4 rows in set (0.34 sec)
+
+mysql> #4.Write a query to select all articles which do not have any comments (using join)
+mysql> SELECT articles.id AS article_id FROM
+    -> articles LEFT JOIN comments
+    -> ON articles.id = comments.article_id
+    -> WHERE comments.id IS NULL;
++------------+
+| article_id |
++------------+
+|        201 |
+|        206 |
+|        207 |
+|        208 |
++------------+
+4 rows in set (0.00 sec)
+
+mysql> #5.Write a query to select article which has maximum comments
+mysql> SELECT article_id, COUNT(article_id) AS no_of_comments
+    -> FROM comments
+    -> GROUP BY article_id
+    -> ORDER BY no_of_comments DESC
+    -> LIMIT 1;
++------------+----------------+
+| article_id | no_of_comments |
++------------+----------------+
+|        203 |              2 |
++------------+----------------+
+1 row in set (0.00 sec)
+
+mysql> 6.Write a query to select article which does not have more than one comment by the same user ( do this using left join and group by )
+mysql> SELECT articles.id AS article_id, commentor_id, COUNT(commentor_id) AS no_of_comments
+    -> FROM articles LEFT JOIN comments 
+    -> ON articles.id = comments.article_id 
+    -> WHERE commentor_id IS NOT NULL 
+    -> GROUP BY article_id, commentor_id 
+    -> HAVING no_of_comments <= 1;
++------------+--------------+----------------+
+| article_id | commentor_id | no_of_comments |
++------------+--------------+----------------+
+|        202 |            2 |              1 |
+|        205 |            3 |              1 |
+|        209 |            1 |              1 |
+|        209 |            6 |              1 |
+|        210 |            2 |              1 |
+|        210 |            3 |              1 |
++------------+--------------+----------------+
+6 rows in set (0.00 sec)
