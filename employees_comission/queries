@@ -33,7 +33,7 @@ mysql> INSERT INTO employees VALUES
     -> (3, 'Rahul Dravis', 700000, 1),
     -> (4, 'Ricky Pointing', 600000, 2),
     -> (5, 'Albie Morkal', 650000, 2),
-    -> (6, 'Wasim Akram', 75000, 3);
+    -> (6, 'Wasim Akram', 750000, 3);
 Query OK, 6 rows affected (0.09 sec)
 Records: 6  Duplicates: 0  Warnings: 0
 
@@ -49,10 +49,7 @@ mysql> INSERT INTO commissions VALUES
 Query OK, 8 rows affected (0.41 sec)
 Records: 8  Duplicates: 0  Warnings: 0
 
-
-    -> );
-Query OK, 0 rows affected (0.50 sec)
-
+mysql> #(i)Find the employee who gets the highest total commission
 mysql> SELECT employees.id, employees.name, SUM(commissions.commission_amount) AS total_comissions 
     -> FROM employees INNER JOIN commissions 
     -> ON employees.id = commissions.employee_id 
@@ -66,21 +63,24 @@ mysql> SELECT employees.id, employees.name, SUM(commissions.commission_amount) A
 +----+-------------+------------------+
 1 row in set (0.00 sec)
 
-mysql> SELECT * FROM employees
+mysql> SELECT * FROM employees 
+    -> WHERE salary = (SELECT 
+    -> salary FROM employees 
     -> ORDER BY salary DESC 
-    -> LIMIT 3,1;
+    -> LIMIT 3,1);
 +----+--------------+--------+---------------+
 | id | name         | salary | department_id |
 +----+--------------+--------+---------------+
-|  5 | Albie Morkal | 650000 |             2 |
+|  3 | Rahul Dravid | 700000 |             1 |
 +----+--------------+--------+---------------+
-1 row in set (0.00 sec)
 
+mysql> #(iii)Find department that is giving highest commission
 mysql> SELECT departments.name AS department, SUM(commissions.commission_amount) AS total_commission 
     -> FROM ((departments
     -> INNER JOIN employees ON departments.id = employees.department_id)
     -> INNER JOIN commissions ON employees.id = commissions.employee_id)
-    -> GROUP BY departments.id
+    -> GROUP BY department
+    -> ORDER BY total_commission DESC
     -> LIMIT 1;
 +------------+------------------+
 | department | total_commission |
@@ -89,6 +89,10 @@ mysql> SELECT departments.name AS department, SUM(commissions.commission_amount)
 +------------+------------------+
 3 rows in set (0.00 sec)
 
+mysql> /*(iv)Find employees getting commission more than 3000
+   /*> Display Output in following pattern:  
+   /*> Chris Gayle, Rahul Dravid  4000
+   /*> */
 mysql> SELECT CONCAT_WS(',', employees.name, commissions.commission_amount) 
     -> AS employees_with_more_than_3000_commission 
     -> FROM employees 

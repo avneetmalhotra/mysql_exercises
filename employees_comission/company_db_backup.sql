@@ -86,7 +86,7 @@ CREATE TABLE `employees` (
 
 LOCK TABLES `employees` WRITE;
 /*!40000 ALTER TABLE `employees` DISABLE KEYS */;
-INSERT INTO `employees` VALUES (1,'Chris Gayle',1000000,1),(2,'Michael Clarke',800000,2),(3,'Rahul Dravis',700000,1),(4,'Ricky Pointing',600000,2),(5,'Albie Morkal',650000,2),(6,'Wasim Akram',75000,3);
+INSERT INTO `employees` VALUES (1,'Chris Gayle',1000000,1),(2,'Michael Clarke',800000,2),(3,'Rahul Dravid',700000,1),(4,'Ricky Pointing',600000,2),(5,'Albie Morkal',650000,2),(6,'Wasim Akram',750000,3);
 /*!40000 ALTER TABLE `employees` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
