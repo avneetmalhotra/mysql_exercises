@@ -93,17 +93,15 @@ mysql> /*(iv)Find employees getting commission more than 3000
    /*> Display Output in following pattern:  
    /*> Chris Gayle, Rahul Dravid  4000
    /*> */
-mysql> SELECT CONCAT_WS(',', employees.name, commissions.commission_amount) 
-    -> AS employees_with_more_than_3000_commission 
+mysql> SELECT GROUP_CONCAT(employees.name), commissions.commission_amount 
     -> FROM employees 
     -> INNER JOIN commissions ON employees.id = commissions.employee_id 
-    -> WHERE commissions.commission_amount > 3000;
-+------------------------------------------+
-| employees_with_more_than_3000_commission |
-+------------------------------------------+
-| Chris Gayle,5000                         |
-| Chris Gayle,4000                         |
-| Rahul Dravis,4000                        |
-| Wasim Akram,5000                         |
-+------------------------------------------+
-4 rows in set (0.00 sec)
+    -> WHERE commissions.commission_amount > 3000 
+    -> GROUP BY commissions.commission_amount;
++------------------------------+-------------------+
+| GROUP_CONCAT(employees.name) | commission_amount |
++------------------------------+-------------------+
+| Chris Gayle,Rahul Dravid     |              4000 |
+| Chris Gayle,Wasim Akram      |              5000 |
++------------------------------+-------------------+
+2 rows in set (0.00 sec)
