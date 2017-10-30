@@ -23,11 +23,11 @@ DROP TABLE IF EXISTS `colors`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `colors` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(10) DEFAULT NULL,
-  `density` float(3,2) DEFAULT NULL,
+  `id` int(11) NOT NULL,
+  `name` varchar(10) NOT NULL,
+  `density` float(3,2) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -48,15 +48,15 @@ DROP TABLE IF EXISTS `mixtures`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `mixtures` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `parent1_id` int(11) DEFAULT NULL,
-  `parent2_id` int(11) DEFAULT NULL,
-  `mix_id` int(11) DEFAULT NULL,
-  `mix_density` float(3,2) DEFAULT NULL,
-  `parent1_perc` int(11) DEFAULT '0',
-  `parent2_perc` int(11) DEFAULT '0',
+  `id` int(11) NOT NULL,
+  `parent1_id` int(11) NOT NULL,
+  `parent2_id` int(11) NOT NULL,
+  `mix_id` int(11) NOT NULL,
+  `mix_density` float(3,2) NOT NULL,
+  `parent1_perc` int(11) NOT NULL,
+  `parent2_perc` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -78,4 +78,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-10-27 19:44:28
+-- Dump completed on 2017-10-30 17:22:47

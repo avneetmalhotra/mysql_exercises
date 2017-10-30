@@ -1,4 +1,4 @@
-mysql> CREATE DATABASE paint;
+	mysql> CREATE DATABASE paint;
 Query OK, 1 row affected (0.00 sec)
 
 mysql> USE paint;
@@ -47,17 +47,11 @@ Records: 4  Duplicates: 0  Warnings: 0
 
 
 ##1. Find the colors that can be clubbed with 'Red' and also name the resulting color
-mysql> SELECT b.name AS 'combined with', c.name AS 'resulting color'
-       FROM (((colors AS a 
-       INNER JOIN mixtures ON a.id = mixtures.parent1_id AND a.name = 'Red')
-       INNER JOIN colors AS b ON b.id = mixtures.parent2_id)
-       INNER JOIN colors AS c ON c.id = mixtures.mix_id)
-       UNION
-       SELECT b.name AS 'combined with', c.name AS 'resulting color'
-       FROM (((colors AS a 
-       INNER JOIN mixtures ON a.id = mixtures.parent2_id AND a.name = 'Red')
-       INNER JOIN colors AS b ON b.id = mixtures.parent1_id)
-       INNER JOIN colors AS c ON c.id = mixtures.mix_id);
+mysql>  SELECT b.name AS 'combined with', c.name AS 'resulting color' 
+		FROM ((mixtures 
+		INNER JOIN colors AS a ON (mixtures.parent1_id = a.id OR mixtures.parent2_id = a.id) AND a.name = 'red')
+		INNER JOIN colors AS b ON (mixtures.parent1_id = b.id OR mixtures.parent2_id = b.id) AND b.name != 'red')
+		INNER JOIN colors AS c ON (mixtures.mix_id = c.id OR mixtures.mix_id = c.id);
 +---------------+-----------------+
 | combined with | resulting color |
 +---------------+-----------------+
@@ -80,30 +74,20 @@ mysql> SELECT c.name FROM (((colors AS a
 1 row in set (0.00 sec)
 
 ##3. Find the mixtures that have one common parent
-mysql> SELECT temp.parent_name AS 'parent name', temp.possible_mixture AS 'possible mixture' 
-       FROM (
-       SELECT a.name AS parent_name, GROUP_CONCAT(b.name SEPARATOR ' & ') AS possible_mixture 
-       FROM ((colors AS a 
-       INNER JOIN mixtures ON a.id = mixtures.parent1_id ) 
-       INNER JOIN colors AS b ON b.id = mixtures.mix_id ) 
-       GROUP BY a.name
-       UNION
-       SELECT a.name AS parent_name, GROUP_CONCAT(b.name SEPARATOR ' & ') AS possible_mixture 
-       FROM ((colors AS a 
-       INNER JOIN mixtures ON a.id = mixtures.parent2_id ) 
-       INNER JOIN colors AS b ON b.id = mixtures.mix_id ) 
-       GROUP BY a.name 
-       ) AS temp 
-       GROUP BY temp.parent_name;
+mysql>  SELECT  a.name AS 'parent name', GROUP_CONCAT(b.name SEPARATOR ' & ') AS 'possible mixture'
+		FROM (mixtures
+		INNER JOIN colors AS a ON a.id = mixtures.parent1_id OR a.id = mixtures.parent2_id)
+		INNER JOIN colors AS b ON b.id = mixtures.mix_id
+		GROUP BY a.name; 
 +-------------+-----------------------+
 | parent name | possible mixture      |
 +-------------+-----------------------+
 | Blue        | Pink & Cyan           |
-| Green       | Cyan                  |
+| Green       | Yellow & Cyan         |
 | Red         | Yellow & Pink & White |
 | Yellow      | White                 |
 +-------------+-----------------------+
-4 rows in set (0.01 sec)
+4 rows in set (0.00 sec)
 
 ##4. Find parent colors(as a couple) that give mix colors with density higher than the color density originally
 mysql> SELECT CONCAT_WS(' & ' , parent1_id, parent2_id) AS 'parent colors' , 
@@ -122,16 +106,14 @@ mysql> SELECT CONCAT_WS(' & ' , parent1_id, parent2_id) AS 'parent colors' ,
 4 rows in set (0.00 sec)
 
 ##5. calculate the total amount of color 'Red'(in kgs) needed to make a 1kg mix each for its possible mixtures(yellow,pink..);
-mysql>SELECT (TRIM(TRAILING '0' FROM SUM(temp.psum/100))) AS amount
-      FROM (
-      SELECT IFNULL(SUM(parent1_perc),0) as psum
-      FROM (colors 
-      INNER JOIN mixtures ON colors.id = mixtures.parent1_id AND colors.name = 'Red')
-      UNION
-      SELECT IFNULL(SUM(parent2_perc),0) as psum
-      FROM (colors  
-      INNER JOIN mixtures ON colors.id = mixtures.parent2_id AND colors.name = 'Red')
-      ) AS temp;
+mysql> SELECT (TRIM(TRAILING '0' FROM SUM((temp1.sum1 + temp2.sum2)/100))) AS amount
+	   FROM 
+	   (SELECT IFNULL(SUM(parent1_perc),0) AS sum1 
+	   	FROM mixtures AS x INNER JOIN colors AS a 
+	   	ON (x.parent1_id = a.id AND a.name = 'Red')) AS temp1,
+	   (SELECT IFNULL(SUM(parent2_perc),0) AS sum2 
+	   	FROM mixtures AS y INNER JOIN colors AS b 
+	   	ON (y.parent2_id = b.id AND b.name = 'Red')) AS temp2; 
 +--------+
 | amount |
 +--------+
