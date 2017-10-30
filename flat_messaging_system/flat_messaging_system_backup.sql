@@ -16,51 +16,59 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `recieved_messages`
+-- Table structure for table `chat`
 --
 
-DROP TABLE IF EXISTS `recieved_messages`;
+DROP TABLE IF EXISTS `chat`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `recieved_messages` (
-  `user_id` int(11) DEFAULT NULL,
+CREATE TABLE `chat` (
+  `composer_id` int(11) DEFAULT NULL,
   `message_id` int(11) DEFAULT NULL,
-  `unread` tinyint(1) DEFAULT NULL
+  `message_status` tinyint(1) DEFAULT NULL,
+  `reciever_id` int(11) DEFAULT NULL,
+  `parent_message_id` int(11) DEFAULT NULL,
+  KEY `composer_id` (`composer_id`),
+  KEY `reciever_id` (`reciever_id`),
+  KEY `message_id` (`message_id`),
+  KEY `parent_message_id` (`parent_message_id`),
+  CONSTRAINT `chat_ibfk_1` FOREIGN KEY (`composer_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `chat_ibfk_2` FOREIGN KEY (`reciever_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `chat_ibfk_3` FOREIGN KEY (`message_id`) REFERENCES `messages` (`id`),
+  CONSTRAINT `chat_ibfk_4` FOREIGN KEY (`parent_message_id`) REFERENCES `messages` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `recieved_messages`
+-- Dumping data for table `chat`
 --
 
-LOCK TABLES `recieved_messages` WRITE;
-/*!40000 ALTER TABLE `recieved_messages` DISABLE KEYS */;
-/*!40000 ALTER TABLE `recieved_messages` ENABLE KEYS */;
+LOCK TABLES `chat` WRITE;
+/*!40000 ALTER TABLE `chat` DISABLE KEYS */;
+/*!40000 ALTER TABLE `chat` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `sent_messages`
+-- Table structure for table `messages`
 --
 
-DROP TABLE IF EXISTS `sent_messages`;
+DROP TABLE IF EXISTS `messages`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `sent_messages` (
+CREATE TABLE `messages` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `messenger_id` int(11) DEFAULT NULL,
-  `parent_msg_id` int(11) DEFAULT NULL,
   `text` text,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `sent_messages`
+-- Dumping data for table `messages`
 --
 
-LOCK TABLES `sent_messages` WRITE;
-/*!40000 ALTER TABLE `sent_messages` DISABLE KEYS */;
-/*!40000 ALTER TABLE `sent_messages` ENABLE KEYS */;
+LOCK TABLES `messages` WRITE;
+/*!40000 ALTER TABLE `messages` DISABLE KEYS */;
+/*!40000 ALTER TABLE `messages` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -95,4 +103,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-10-27 15:14:34
+-- Dump completed on 2017-10-30 12:53:40
