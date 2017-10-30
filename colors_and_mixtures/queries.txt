@@ -1,4 +1,4 @@
-	mysql> CREATE DATABASE paint;
+mysql> CREATE DATABASE paint;
 Query OK, 1 row affected (0.00 sec)
 
 mysql> USE paint;
@@ -10,11 +10,6 @@ mysql> CREATE TABLE colors(
        density FLOAT(3,2)
        );
 Query OK, 0 rows affected (0.75 sec)
-
-mysql> ALTER TABLE colors
-       AUTO_INCREMENT = 10;
-Query OK, 0 rows affected (0.05 sec)
-Records: 0  Duplicates: 0  Warnings: 0
 
 mysql> CREATE TABLE mixtures(
        id INT PRIMARY KEY AUTO_INCREMENT,
