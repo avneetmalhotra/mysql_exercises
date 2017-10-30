@@ -1,0 +1,27 @@
+mysql> CREATE DATABASE flat_messaging_system;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> USE flat_messaging_system;
+Database changed
+
+mysql> CREATE TABLE users(
+       id INT PRIMARY KEY AUTO_INCREMENT,
+       name CHAR(30)
+       );
+Query OK, 0 rows affected (0.35 sec)
+
+mysql> CREATE TABLE sent_messages( 
+	   id INT PRIMARY KEY AUTO_INCREMENT, 
+	   text TEXT, 
+	   );
+Query OK, 0 rows affected (0.42 sec)
+
+mysql> CREATE TABLE recieved_messages( 
+	   composer_id INT REFERENCES users(id),
+	   reciever_id INT REFERENCES users(id), 
+	   message_id INT REFERENCES messages(id), 
+	   message_status TINYINT(1),
+	   parent_message_id INT REFERENCES messages(id)
+	   );
+Query OK, 0 rows affected (0.37 sec)
+

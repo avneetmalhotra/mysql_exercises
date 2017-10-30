@@ -1,0 +1,47 @@
+mysql> CREATE DATABASE bank;
+
+mysql> USE bank;
+
+mysql> CREATE TABLE users(
+      id INT PRIMARY KEY,
+      name CHAR(40),
+      email CHAR(60),
+      account_no INT
+      );
+
+mysql> CREATE TABLE accounts(
+     id INT PRIMARY KEY,
+     account_no INT,
+     balance INT
+     );
+
+mysql> INSERT INTO users VALUES
+     (101, 'userA', 'usera@email.com', 20001),
+     (102, 'userB', 'userb@email.com', 30001);
+
+mysql> INSERT INTO accounts VALUES
+     (1, 20001, 5000),
+     (2, 30001, 3000);
+
+mysql> #(i) userA is depositing 1000 Rs. his account
+mysql> UPDATE accounts, users
+     SET balance = balance + 1000
+     WHERE users.name = 'userA' AND users.account_no = accounts.account_no
+
+mysql> #(ii)userA is withdrawing 500 Rs.
+mysql> UPDATE accounts, users
+     SET balance = balance - 500
+     WHERE users.name = 'userA' AND users.account_no = accounts.account_no;
+
+mysql> #(iii) userA is transferring 200 Rs to userB's account
+mysql> START TRANSACTION;
+
+mysql> UPDATE accounts, users
+     SET balance = balance - 200
+     WHERE users.name = 'userA' AND users.account_no = accounts.account_no;
+
+mysql> UPDATE accounts, users
+     SET balance = balance + 200
+     WHERE users.name = 'userB' AND users.account_no = accounts.account_no;
+
+mysql> COMMIT;
