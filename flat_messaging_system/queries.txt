@@ -10,13 +10,13 @@ mysql> CREATE TABLE users(
        );
 Query OK, 0 rows affected (0.35 sec)
 
-mysql> CREATE TABLE sent_messages( 
+mysql> CREATE TABLE messages( 
 	   id INT PRIMARY KEY AUTO_INCREMENT, 
 	   text TEXT, 
 	   );
 Query OK, 0 rows affected (0.42 sec)
 
-mysql> CREATE TABLE recieved_messages( 
+mysql> CREATE TABLE chat( 
 	   composer_id INT REFERENCES users(id),
 	   reciever_id INT REFERENCES users(id), 
 	   message_id INT REFERENCES messages(id), 
