@@ -101,14 +101,10 @@ mysql> SELECT CONCAT_WS(' & ' , parent1_id, parent2_id) AS 'parent colors' ,
 4 rows in set (0.00 sec)
 
 ##5. calculate the total amount of color 'Red'(in kgs) needed to make a 1kg mix each for its possible mixtures(yellow,pink..);
-mysql> SELECT (TRIM(TRAILING '0' FROM SUM((temp1.sum1 + temp2.sum2)/100))) AS amount
-	   FROM 
-	   (SELECT IFNULL(SUM(parent1_perc),0) AS sum1 
-	   	FROM mixtures AS x INNER JOIN colors AS a 
-	   	ON (x.parent1_id = a.id AND a.name = 'Red')) AS temp1,
-	   (SELECT IFNULL(SUM(parent2_perc),0) AS sum2 
-	   	FROM mixtures AS y INNER JOIN colors AS b 
-	   	ON (y.parent2_id = b.id AND b.name = 'Red')) AS temp2; 
+mysql> SELECT TRIM(TRAILING '0' FROM SUM(IF(parent1_id = colors.id, parent1_perc, parent2_perc))/100) AS amount
+       FROM  mixtures 
+       INNER JOIN colors ON (mixtures.parent1_id = colors.id || mixtures.parent2_id = colors.id)
+       AND colors.name = 'red'
 +--------+
 | amount |
 +--------+
